@@ -1,0 +1,40 @@
+version: "2"
+services:
+  db:
+    image: mariadb
+    container_name: mydb
+    ports:
+      - 3310:3306
+    environment:
+      MARIADB_ROOT_PASSWORD: motdepassrootquivabienmachin
+    volumes:
+      - ./db-raw:/var/lib/mysql
+    restart: on-failure
+    
+  php:
+    image: dekpo/my-php-image
+    container_name: myphp
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./app:/var/www/html
+      - ./apache_conf:/etc/apache2/sites-available
+    depends_on:
+      - db
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: myadmin
+    ports:
+      - 8080:80
+    depends_on:
+      - db
+
+  adminer:
+    image: adminer
+    container_name: myadminer
+    ports:
+      - 9090:8080
+    depends_on:
+      - db
